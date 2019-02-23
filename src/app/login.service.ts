@@ -22,9 +22,10 @@ export class LoginService {
     }));
   }
 
-  onSignup(email: String, password: String, phone: Number ): Observable<any> {
+  onSignup(email: String, password: String, phone: Number, countrycode: Number ): Observable<any> {
     console.log('in signup service now');
-    return this.http.post('http://localhost:3000/signup', {email: email, pass: password, ph: phone}).pipe(map((response) => {
+    return this.http.post('http://localhost:3000/signup', {email: email, pass: password, ph: phone, code: countrycode})
+    .pipe(map((response) => {
       return response;
     }));
   }

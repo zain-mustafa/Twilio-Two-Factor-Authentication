@@ -1,0 +1,8 @@
+<div class="login-form">
+  <form [formGroup]="form">
+  <h1>SMS Verification has been sent to your phone number.</h1><br>
+  <h3>Please enter verification code in the input below: </h3><br>
+  <input type="text" formControlName="code" />
+  <button (click)="Verify(form)"> Submit </button>
+</form>
+</div>

@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 
 const User = require('./model/user');
+const OTP = require('./otp');
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use((req, res, next) => {
 
 app.post("/login", (req, res, next) => {
   let fetchedUser;
+
   console.log(req.body.email);
   // Using findOne to find the customer from the Database
   User.findOne({ email: req.body.email })
@@ -82,6 +84,7 @@ app.post('/signup', (req, res, next) => {
     const user = new User({
       email: req.body.email,
       phone: req.body.ph,
+      code: req.body.code,
       password: hash
     });
     user.save()
