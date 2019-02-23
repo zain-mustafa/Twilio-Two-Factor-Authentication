@@ -1,0 +1,11 @@
+<div class="login-form">
+  <form [formGroup]="form">
+
+    <input type="email" formControlName="email" placeholder="E-mail"/><br>
+    <input type="password" formControlName="password" placeholder="Password" /><br>
+
+    <button (click)="onLogin(form)"> Login </button><br>
+    <button [routerLink]="['/signup']"> Signup </button>
+
+  </form>
+</div>

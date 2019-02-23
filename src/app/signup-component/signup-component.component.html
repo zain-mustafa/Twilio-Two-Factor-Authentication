@@ -1,0 +1,10 @@
+<div class="login-form">
+  <form [formGroup]="form">
+
+    <input type="email" formControlName="email" placeholder="E-mail"/><br>
+    <input type="password" formControlName="password" placeholder="Password" /><br>
+    <input type ="number" formControlName="phone" placeholder="Phone Number" /><br>
+    <button (click)="onSignup(form)"> Signup </button>
+
+  </form>
+</div>
