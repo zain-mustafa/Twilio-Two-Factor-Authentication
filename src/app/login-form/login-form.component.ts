@@ -15,17 +15,15 @@ export class LoginFormComponent implements OnInit {
 
   ngOnInit() {
     this.form = new FormGroup({
-      user: new FormControl(''),
+      email: new FormControl(''),
       password: new FormControl('')
     });
   }
 
   onLogin(form: FormGroup) {
-    this.loginService.onLogin(form.value.user, form.value.password);
-  }
-
-  onSignup() {
-    console.log('What is my name');
+    this.loginService.onLogin(form.value.email, form.value.password).subscribe(response => {
+      console.log(response);
+    });
   }
 
 }
