@@ -5,8 +5,20 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 
 const User = require('./model/user');
+const OTP = require('./otp');
 
 const app = express();
+
+user = {
+  email: '',
+  phone: '',
+  countrycode: ''
+}
+
+const accountSid = 'AC5001bfa9f9d25326361fecafb0b5b166';
+const authToken = '51c3b2f34026eb4bdd4e8468730b12c2';
+
+const client = require('twilio')(accountSid, authToken);
 
 //Connection set to MongoDB
 mongoose.connect("mongodb://localhost:27017/467FinalProject", { useNewUrlParser: true })
@@ -36,8 +48,8 @@ app.use((req, res, next) => {
 
 app.post("/login", (req, res, next) => {
   let fetchedUser;
+
   console.log(req.body.email);
-  // Using findOne to find the customer from the Database
   User.findOne({ email: req.body.email })
     .then(user => {
       // If the email is not found
@@ -47,26 +59,23 @@ app.post("/login", (req, res, next) => {
         throw new Error('User not found');
       }
       console.log('User found');
-      // If the email is found
       fetchedUser = user;
-      // Checks password and returns true of false depending if the password is correct or not
       return bcrypt.compare( req.body.pass, user.password )
     })
     .then(result => {
       console.log("Password Checked");
-      // Using result from bcrypt to check result
-      // If bcrypt returned false aka account credentials were invalid
       if (!result) {
         console.log('Password was incorrect');
         throw new Error('Password was incorrect');
       }
       console.log('Login successful.');
-      //returns the token and user information as a response to frontend
       res.status(200).json({
-        message: "User has Logged In"
+        message: "User has Logged In",
+        email: fetchedUser.email,
+        phone: fetchedUser.phone,
+        countrycode: fetchedUser.code
       });
     })
-    // Catch any errors
     .catch(err => {
       console.log(err);
 
@@ -82,6 +91,13 @@ app.post('/signup', (req, res, next) => {
     const user = new User({
       email: req.body.email,
       phone: req.body.ph,
+      code: req.body.code,
+      twofactorpin: '',
+      pincreationtime: 0,
+      loginattempt: 0,
+      lastlogin: 0,
+      verifyattempt: 0,
+      lastverify: 0,
       password: hash
     });
     user.save()
@@ -97,6 +113,105 @@ app.post('/signup', (req, res, next) => {
       });
     });
   });
+});
+
+app.post('/sendcode', (req,res,next) => {
+  const oneTimePass = OTP.oneTimePass();
+  const toNumber = '+' + req.body.code + req.body.phone;
+  const creationDate = new Date();
+  let attemptNumber;
+  let wasSent = false;
+  console.log(req.body);
+  console.log(oneTimePass);
+
+  User.findOne({ email: req.body.email})
+  .then(user => {
+    console.log(user.verifyattempt);
+    console.log((creationDate - user.lastverify)/(1000 * 60));
+    attemptNumber = user.verifyattempt
+    console.log(attemptNumber);
+
+    if ( attemptNumber < 4) {
+
+      client.messages.create({
+        to: toNumber,
+        from: '+12267734977',
+        body: oneTimePass
+      }).then(
+        res.status(200).json({
+          message: 'Code Sent'
+        })
+      );
+
+      attemptNumber = attemptNumber + 1;
+      wasSent = true;
+      console.log("Inside Attempts");
+      console.log(attemptNumber);
+      console.log(wasSent);
+    } else if ( (creationDate - user.lastverify)/(1000 * 60) > 15) {
+
+      client.messages.create({
+        to: toNumber,
+        from: '+12267734977',
+        body: oneTimePass
+      }).then(
+        res.status(200).json({
+          message: 'Code Sent'
+        })
+      );
+
+      attemptNumber = 0;
+      wasSent = true;
+      console.log("Inside Date");
+      console.log(attemptNumber);
+      console.log(wasSent);
+    } else {
+      res.status(200).json({
+        message: 'Code Not Sent'
+      });
+    }
+
+    if ( wasSent === true ) {
+      console.log(attemptNumber);
+      User.update(
+        { email: req.body.email },
+        { $set:
+          {
+            twofactorpin: oneTimePass,
+            pincreationtime: creationDate,
+            lastverify: creationDate,
+            verifyattempt: attemptNumber
+          }
+        }
+      ).then(result => {
+        console.log(result);
+      });
+    }
+
+  });
+});
+
+app.post('/verify', (req,res,next) => {
+  const currentDate = new Date();
+  User.findOne({ email: req.body.email })
+  .then(user => {
+    console.log((currentDate - user.pincreationtime)/(1000*60));
+    if ( ( currentDate - user.pincreationtime )/(1000*60) > 5 ) {
+      res.status(200).json({
+        message: "Time Has Passed"
+      });
+    } else {
+      if ( user.twofactorpin === req.body.code) {
+        res.status(200).json({
+          message: "Authenticated"
+        });
+      } else {
+        res.status(200).json({
+          message: "Not Authenticated"
+        });
+      }
+    }
+  })
 });
 
 module.exports = app;

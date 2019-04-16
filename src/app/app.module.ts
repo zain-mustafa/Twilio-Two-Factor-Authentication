@@ -8,13 +8,19 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { SignupComponentComponent } from './signup-component/signup-component.component';
+import { AuthOptionsComponent } from './auth-options/auth-options.component';
+import { SmsVerificationComponent } from './sms-verification/sms-verification.component';
+import { ConfirmationComponent } from './confirmation/confirmation.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginFormComponent,
-    SignupComponentComponent
+    SignupComponentComponent,
+    AuthOptionsComponent,
+    SmsVerificationComponent,
+    ConfirmationComponent
   ],
   imports: [
     BrowserModule,

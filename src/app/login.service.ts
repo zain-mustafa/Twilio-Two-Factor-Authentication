@@ -8,23 +8,29 @@ import { Observable } from 'rxjs';
 })
 export class LoginService {
 
-  user = [{
+  user = {
     email: '',
-    phone: ''
-  }];
+    phone: '',
+    countrycode: ''
+  };
 
   constructor(private http: HttpClient) { }
 
   onLogin(email: String, password: String): Observable<any> {
     console.log('in login service now');
     return this.http.post('http://localhost:3000/login', {email: email, pass: password}).pipe(map((response) => {
+      this.user.email = response['email'];
+      this.user.phone = response['phone'];
+      this.user.countrycode = response['countrycode'];
+      console.log(this.user);
       return response;
     }));
   }
 
-  onSignup(email: String, password: String, phone: Number ): Observable<any> {
+  onSignup(email: String, password: String, phone: Number, countrycode: Number ): Observable<any> {
     console.log('in signup service now');
-    return this.http.post('http://localhost:3000/signup', {email: email, pass: password, ph: phone}).pipe(map((response) => {
+    return this.http.post('http://localhost:3000/signup', {email: email, pass: password, ph: phone, code: countrycode})
+    .pipe(map((response) => {
       return response;
     }));
   }
