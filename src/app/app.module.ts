@@ -10,6 +10,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { SignupComponentComponent } from './signup-component/signup-component.component';
 import { AuthOptionsComponent } from './auth-options/auth-options.component';
 import { SmsVerificationComponent } from './sms-verification/sms-verification.component';
+import { ConfirmationComponent } from './confirmation/confirmation.component';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { SmsVerificationComponent } from './sms-verification/sms-verification.co
     LoginFormComponent,
     SignupComponentComponent,
     AuthOptionsComponent,
-    SmsVerificationComponent
+    SmsVerificationComponent,
+    ConfirmationComponent
   ],
   imports: [
     BrowserModule,

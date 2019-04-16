@@ -3,6 +3,9 @@
   <h1>SMS Verification has been sent to your phone number.</h1><br>
   <h3>Please enter verification code in the input below: </h3><br>
   <input type="text" formControlName="code" />
+  <h5>You have 5 minutes to enter the code!! </h5><br>
+  <h5>If the 5 minutes have passed or you did not recieve the code please click the "Re-Send Code" button</h5><br>
+  <button (click)="resendCode()"> Re-Send Code </button>
   <button (click)="Verify(form)"> Submit </button>
 </form>
 </div>
