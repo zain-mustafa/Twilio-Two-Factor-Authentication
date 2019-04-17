@@ -131,6 +131,10 @@ app.post('/sendcode', (req,res,next) => {
     attemptNumber = user.verifyattempt
     console.log(attemptNumber);
 
+    if ( (creationDate - user.lastverify)/(1000 * 60) > 15) {
+      attemptNumber = 0;
+    }
+
     if ( attemptNumber < 4) {
 
       client.messages.create({
@@ -139,7 +143,8 @@ app.post('/sendcode', (req,res,next) => {
         body: oneTimePass
       }).then(
         res.status(200).json({
-          message: 'Code Sent'
+          message: 'Code Sent',
+          attempt : attemptNumber + 1
         })
       );
 
@@ -156,18 +161,22 @@ app.post('/sendcode', (req,res,next) => {
         body: oneTimePass
       }).then(
         res.status(200).json({
-          message: 'Code Sent'
+          message: 'Code Sent',
+          attempt : attemptNumber + 1
         })
       );
 
-      attemptNumber = 0;
+      attemptNumber = 1;
       wasSent = true;
       console.log("Inside Date");
       console.log(attemptNumber);
       console.log(wasSent);
     } else {
+      const timeToReset = (15 - (creationDate - user.lastverify)/(1000 * 60));
       res.status(200).json({
-        message: 'Code Not Sent'
+        message: 'Code Not Sent',
+        alert: 'You have reached your limit of 4 tries, please try again in ' + timeToReset.toFixed(1) +  ' minutes!!',
+        attempt: attemptNumber
       });
     }
 
@@ -196,9 +205,10 @@ app.post('/verify', (req,res,next) => {
   User.findOne({ email: req.body.email })
   .then(user => {
     console.log((currentDate - user.pincreationtime)/(1000*60));
-    if ( ( currentDate - user.pincreationtime )/(1000*60) > 5 ) {
+    if ( ( currentDate - user.pincreationtime )/(1000*60) > 5) {
       res.status(200).json({
-        message: "Time Has Passed"
+        message: "Time Has Passed",
+        alert: "Your code has expired, please click re-send code and make sure you enter it within 5 minutes."
       });
     } else {
       if ( user.twofactorpin === req.body.code) {
@@ -207,7 +217,8 @@ app.post('/verify', (req,res,next) => {
         });
       } else {
         res.status(200).json({
-          message: "Not Authenticated"
+          message: "Not Authenticated",
+          alert: 'Your code is incorrect!!'
         });
       }
     }

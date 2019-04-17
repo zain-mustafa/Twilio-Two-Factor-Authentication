@@ -1,10 +1,14 @@
 <div class="login-form">
   <form [formGroup]="form">
   <h1>SMS Verification has been sent to your phone number.</h1><br>
+  <h1>Attempt Number: {{ this.verificationService.attemptNumber }}</h1><br>
   <h3>Please enter verification code in the input below: </h3><br>
   <input type="text" formControlName="code" />
+  <h5 *ngIf='this.incorrectMessage !== ""' style="color: red"> {{ this.incorrectMessage }} </h5><br>
   <h5>You have 5 minutes to enter the code!! </h5><br>
+  <h5 *ngIf='this.timeout' style="color: red"> {{ this.verificationService.timeOutMessage }} </h5><br>
   <h5>If the 5 minutes have passed or you did not recieve the code please click the "Re-Send Code" button</h5><br>
+  <h5 *ngIf='this.alert' style="color: red">{{ this.verificationService.alertMessage }}</h5><br>
   <button (click)="resendCode()"> Re-Send Code </button>
   <button (click)="Verify(form)"> Submit </button>
 </form>
