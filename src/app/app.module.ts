@@ -11,6 +11,7 @@ import { SignupComponentComponent } from './signup-component/signup-component.co
 import { AuthOptionsComponent } from './auth-options/auth-options.component';
 import { SmsVerificationComponent } from './sms-verification/sms-verification.component';
 import { ConfirmationComponent } from './confirmation/confirmation.component';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { ConfirmationComponent } from './confirmation/confirmation.component';
     AppRoutingModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]
