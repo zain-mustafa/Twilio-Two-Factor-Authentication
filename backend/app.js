@@ -15,8 +15,8 @@ user = {
   countrycode: ''
 }
 
-const accountSid = 'AC5001bfa9f9d25326361fecafb0b5b166';
-const authToken = '51c3b2f34026eb4bdd4e8468730b12c2';
+const accountSid = '<< TWILIO ACCOUNTSID >>';
+const authToken = '<< TWILIO AUTH TOKEN >>';
 
 const client = require('twilio')(accountSid, authToken);
 
